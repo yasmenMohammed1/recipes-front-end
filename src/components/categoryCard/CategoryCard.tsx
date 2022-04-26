@@ -10,8 +10,29 @@ import {
   Badge,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { type } from "@testing-library/user-event/dist/type";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-export default function CategoryCard() {
+export default function CategoryCard({ category }: any) {
+  const [categoryImage, setCategoryImage] = useState("");
+  useEffect(() => {
+    axios
+      .get(
+        `http://localhost:8080/categories/${category._id}/${category.image}`,
+        { responseType: "blob" }
+      )
+      //   .then(async (response: any) => new Blob([await response.data],{type:''}))
+      .then((imageBlob: any) => {
+        const imageFakeUrl = imageBlob;
+        // const imageObjectURL = URL.createObjectURL(imageBlob);
+        setCategoryImage(imageBlob.config?.url);
+        // setCategoryImage(imageBlob);
+      })
+      .catch((err: Error) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <Center py={6}>
       <Box
@@ -23,27 +44,8 @@ export default function CategoryCard() {
         p={6}
         textAlign={"center"}
       >
-        <Avatar
-          size={"xl"}
-          src={
-            "https://images.unsplash.com/photo-1520810627419-35e362c5dc07?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
-          }
-          mb={4}
-          pos={"relative"}
-          _after={{
-            content: '""',
-            w: 4,
-            h: 4,
-            bg: "green.300",
-            border: "2px solid white",
-            rounded: "full",
-            pos: "absolute",
-            bottom: 0,
-            right: 3,
-          }}
-        />
         <Heading fontSize={"2xl"} fontFamily={"body"}>
-          Lindsey James
+          {category?.name}{" "}
         </Heading>
         <Text fontWeight={600} color={"gray.500"} mb={4}>
           @lindsey_jam3s
